@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"blog/utils"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -34,6 +35,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		} else {
 			ctx.Set("userId", claims["userId"])
+			log.Printf("User ID from token: %v", claims["userId"])
 			ctx.Set("userName", claims["userName"])
 			ctx.Next()
 		}

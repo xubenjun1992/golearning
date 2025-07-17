@@ -1,12 +1,14 @@
 package core
 
 import (
+	"blog/model"
 	"fmt"
 	"sync"
 
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -40,11 +42,18 @@ func GetDb() *gorm.DB {
 
 		// 建立数据库连接
 		var err error
-		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
 		if err != nil {
 			panic("连接数据库失败: " + err.Error())
 		}
 	})
+	db.AutoMigrate(
+		&model.User{},
+		&model.Post{},
+		&model.Comment{},
+	)
 	return db
 
 }

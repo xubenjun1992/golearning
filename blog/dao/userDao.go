@@ -35,7 +35,7 @@ func (u *userDao) CreateUser(user model.User) (*model.User, error) {
 func (u *userDao) GetUserByName(name string) (*model.User, error) {
 	db := core.GetDb()
 	var user model.User
-	if err := db.Where("name = ?", name).First(&user).Error; err != nil {
+	if err := db.Where("username = ?", name).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

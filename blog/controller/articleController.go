@@ -6,6 +6,7 @@ import (
 	"blog/reqdto"
 	"blog/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +33,12 @@ func NewArticleController(articleService service.ArticleService) ArticleControll
 func (a *articleController) CreateArticle(c *gin.Context) {
 	var createArticleDTO reqdto.CreateArticleDTO
 	c.ShouldBindJSON(&createArticleDTO)
-	userId := c.GetUint("userId")
+	var userId uint
+	if createArticleDTO.UserId == 0 {
+		userId = c.GetUint("userId")
+	} else {
+		userId = createArticleDTO.UserId
+	}
 	post := model.Post{
 		Title:    createArticleDTO.Title,
 		Content:  createArticleDTO.Content,
@@ -48,7 +54,12 @@ func (a *articleController) CreateArticle(c *gin.Context) {
 }
 
 func (a *articleController) GetArticleById(c *gin.Context) {
-	articleId := c.GetInt64("id")
+	articleIdStr := c.Param("id")
+	articleId, err := strconv.Atoi(articleIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid article ID"})
+		return
+	}
 	if post, err := a.articleService.GetArticleById(uint(articleId)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -79,7 +90,12 @@ func (a *articleController) UpdateArticle(c *gin.Context) {
 	}
 }
 func (a *articleController) DeleteArticle(c *gin.Context) {
-	articleId := c.GetInt64("id")
+	articleIdStr := c.Param("id")
+	articleId, err := strconv.Atoi(articleIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid article ID"})
+		return
+	}
 	if err := a.articleService.DeleteArticle(uint(articleId)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -88,7 +104,7 @@ func (a *articleController) DeleteArticle(c *gin.Context) {
 	}
 }
 func (a *articleController) GetArticlesByUserId(c *gin.Context) {
-	uid, exists := c.Get("userID")
+	uid, exists := c.Get("userId")
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID not found"})
 		return

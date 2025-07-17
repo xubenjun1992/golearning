@@ -68,17 +68,18 @@ func (u *userController) Login(ctx *gin.Context) {
 	var loginDTO reqdto.CreateUserDTO
 	if err := ctx.ShouldBindJSON(&loginDTO); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-
+		return
 	}
 
 	user, err := u.userService.GetUserByName(loginDTO.Username)
 	if err != nil || user == nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
-
+		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password)); err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+		return
 	}
 
 	ctx.Set("userId", user.Id)

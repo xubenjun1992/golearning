@@ -27,9 +27,11 @@ func init() {
 }
 func loadConfig() {
 	Configs = &Config{}
-	viper.AddConfigPath("properties") // 配置文件所在目录
-	viper.SetConfigName("config")     // 配置文件名，不带扩展名
-	viper.SetConfigType("yaml")       // 配置文件类型
+	viper.AddConfigPath("properties")       // 配置文件所在目录
+	viper.SetConfigName("config")           // 配置文件名，不带扩展名
+	viper.SetConfigType("yaml")             // 配置文件类型
+	viper.AddConfigPath("../properties")    // 也可以添加其他路径
+	viper.AddConfigPath("../../properties") // 也可以添加其他路径
 	if err := viper.ReadInConfig(); err != nil {
 		panic("读取配置文件失败: " + err.Error())
 	}

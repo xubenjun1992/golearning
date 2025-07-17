@@ -2,21 +2,12 @@ package main
 
 import (
 	"blog/controller"
-	"blog/core"
 	"blog/dao"
-	"blog/model"
 	"blog/rout"
 	"blog/service"
 )
 
 func main() {
-	db := core.GetDb()
-	db.AutoMigrate(
-		&model.User{},
-		&model.Post{},
-		&model.Comment{},
-	)
-
 	userDao := dao.NewUserDao()
 	commentDao := dao.NewCommentDao()
 	articleDao := dao.NewArticleDao()
